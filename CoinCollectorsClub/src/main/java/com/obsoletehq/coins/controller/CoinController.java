@@ -1,23 +1,20 @@
 package com.obsoletehq.coins.controller;
 
-import com.obsoletehq.coins.model.Player;
+import com.obsoletehq.coins.repository.UserRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import java.util.List;
 
 @Controller
 public class CoinController {
 
-    @GetMapping("/leaderboard")
-    public String leaderboard(Model model) {
-        List<Player> players = List.of(
-                new Player("Alice", 55.25),
-                new Player("Bob", 48.90),
-                new Player("Charlie", 12.40)
-        );
+    private final UserRepo playerRepo;
+    private static final Logger logger = LoggerFactory.getLogger(CoinController.class);
 
-        model.addAttribute("players", players);
-        return "leaderboard";
+    @Autowired
+    public CoinController(UserRepo playerRepo) {
+        this.playerRepo = playerRepo;
     }
+
 }

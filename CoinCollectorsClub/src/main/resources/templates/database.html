@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Database View</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h1>Database Contents</h1>
+
+<h2>Users</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Collection Worth</th>
+        <th>Total Coins</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.collectionWorth}"></td>
+        <td th:text="${user.coinCollection.size()}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Coin Families</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Display Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="family : ${families}">
+        <td th:text="${family.id}"></td>
+        <td th:text="${family.name}"></td>
+        <td th:text="${family.displayName}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Coins</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Family</th>
+        <th>Base Value</th>
+        <th>Rarity Weight</th>
+        <th>Special</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="coin : ${coins}">
+        <td th:text="${coin.id}"></td>
+        <td th:text="${coin.name}"></td>
+        <td th:text="${coin.family.displayName}"></td>
+        <td th:text="${coin.baseValue}"></td>
+        <td th:text="${coin.rarityWeight}"></td>
+        <td th:text="${coin.special}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
