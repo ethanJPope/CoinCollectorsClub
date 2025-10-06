@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -31,7 +32,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "coin_id")
     @Column(name = "quantity")
-    private Map<UUID, Integer> coinCollection;
+    private Map<UUID, Integer> coinCollection; // Updated key type from Long to UUID
 
     @Column(name = "total_searches")
     private int totalSearches;
@@ -47,14 +48,20 @@ public class User {
 
     @Column(name = "active")
     private boolean active;
+    @Column(name = "tokens")
+    private int tokens;
+    @Column(name = "role", nullable = false)
+    private String role = "ROLE_USER";
+
+
 
     public User() {
         this.coinCollection = new HashMap<>();
         this.collectionWorth = BigDecimal.ZERO;
+        this.tokens = 1000;
     }
 
     public User(String username, String password, String email) {
-        this.id = UUID.randomUUID();
         this.username = username;
         this.password = password;
         this.email = email;
@@ -65,24 +72,36 @@ public class User {
         this.lastSearchTime = LocalDateTime.now();
         this.createdAt = LocalDateTime.now();
         this.active = true;
+        this.tokens = 1000;
     }
 
-    public void addCoin(Coin coin) {
-        addCoin(coin.getId());
+    // Updated method to accept a Coin object and use its UUID id
+    public void addCointoCollection(Coin coin) {
+        addCointoCollection(coin.getId());
     }
 
-    public void addCoin(UUID coinId) {
+    // Updated method to accept a UUID
+    public void addCointoCollection(UUID coinId) {
         coinCollection.merge(coinId, 1, Integer::sum);
     }
+
 
     // Getters and setters
     public UUID getId() { return id; }
     public String getUsername() { return username; }
     public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public Map<UUID, Integer> getCoinCollection() { return coinCollection; }
     public BigDecimal getCollectionWorth() { return collectionWorth; }
     public void setCollectionWorth(BigDecimal worth) { this.collectionWorth = worth; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+    public int getTokens() { return tokens; }
+    public void setTokens(int tokens) { this.tokens = tokens; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
 }

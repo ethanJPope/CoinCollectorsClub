@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game - Coin Collectors Club</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #6c757d;
+            color: white;
+        }
+        .card {
+            background: #343a40;
+            color: white;
+            border: 1px solid #495057;
+        }
+        .card-header {
+            background: #2d3338;
+            border-bottom: 1px solid #495057;
+            color: white;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: white;
+        }
+        .btn-primary {
+            background-color: #341539;
+            border-color: #341539;
+        }
+        .btn-primary:hover {
+            background-color: #2a1029;
+            border-color: #2a1029;
+        }
+        .pack-card {
+            background: #343a40;
+            border: 1px solid #495057;
+            border-radius: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .pack-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .pack-common {
+            border-left: 5px solid #6c757d;
+        }
+        .pack-premium {
+            border-left: 5px solid #007bff;
+        }
+        .pack-legendary {
+            border-left: 5px solid #ffc107;
+        }
+        .pack-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .pack-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #341539;
+        }
+        .pack-description {
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+        .text-muted {
+            color: #adb5bd !important;
+        }
+        .stats-card {
+            background: #343a40;
+            color: white;
+            border: 1px solid #495057;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/nav :: topnav"></div>
+
+<div class="container mt-4">
+    <!-- Player Stats -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card stats-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="card-title mb-3"> Your Tokens</h5>
+                            <h2 class="text-primary" th:text="${user?.tokens ?: 0}">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coins Received Alert -->
+    <div th:if="${coinsReceived != null}">
+        <div class="alert alert-success mt-3">
+            <h4 class="alert-heading">You received:</h4>
+            <ul class="mb-0">
+                <li th:each="coin : ${coinsReceived}">
+                    <span th:text="${coin.name}">Coin Name</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Pack Shop -->
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4 text-center">Pack Shop</h2>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Common Pack -->
+        <div class="col-lg-4 col-md-6">
+            <div class="pack-card pack-common p-4 text-center">
+                <h3 class="text-white">Common Pack</h3>
+                <div class="pack-price mb-3">50 tokens</div>
+                <div class="pack-description mb-4">
+                    Contains 5 coins with guaranteed common rarity.
+                    Perfect for building your basic collection!
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">
+                        • 5 coins per pack<br>
+                        • Common rarity guaranteed<br>
+                        • Great value for beginners
+                    </small>
+                </div>
+                <form th:action="@{/game/buy-pack}" method="post" class="d-inline">
+                    <input type="hidden" name="packType" value="COMMON">
+                    <button type="submit" class="btn btn-primary btn-lg w-100" th:disabled="${(user?.tokens ?: 0) < 50}">
+                        Buy Common Pack
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Premium Pack -->
+        <div class="col-lg-4 col-md-6">
+            <div class="pack-card pack-premium p-4 text-center">
+                <h3 class="text-white">Premium Pack</h3>
+                <div class="pack-price mb-3">100 tokens</div>
+                <div class="pack-description mb-4">
+                    Contains 5 coins with higher chances for rare finds.
+                    Better odds for valuable coins!
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">
+                        • 5 coins per pack<br>
+                        • Improved rare chances<br>
+                        • Balanced risk/reward
+                    </small>
+                </div>
+                <form th:action="@{/game/buy-pack}" method="post" class="d-inline">
+                    <input type="hidden" name="packType" value="PREMIUM">
+                    <button type="submit" class="btn btn-primary btn-lg w-100" th:disabled="${(user?.tokens ?: 0) < 100}">
+                        Buy Premium Pack
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Legendary Pack -->
+        <div class="col-lg-4 col-md-6 offset-lg-0 offset-md-3">
+            <div class="pack-card pack-legendary p-4 text-center">
+                <h3 class="text-white">Legendary Pack</h3>
+                <div class="pack-price mb-3">200 tokens</div>
+                <div class="pack-description mb-4">
+                    Premium pack with guaranteed rare coins.
+                    The ultimate pack for serious collectors!
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">
+                        • 5 coins per pack<br>
+                        • Guaranteed rare coins<br>
+                        • Maximum rare chances
+                    </small>
+                </div>
+                <form th:action="@{/game/buy-pack}" method="post" class="d-inline">
+                    <input type="hidden" name="packType" value="LEGENDARY">
+                    <button type="submit" class="btn btn-primary btn-lg w-100" th:disabled="${(user?.tokens ?: 0) < 200}">
+                        Buy Legendary Pack
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
