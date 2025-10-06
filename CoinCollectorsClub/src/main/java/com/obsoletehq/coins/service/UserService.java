@@ -33,9 +33,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
-
     /**
      * Register a new user with encrypted password
      */
@@ -109,35 +106,37 @@ public class UserService {
     @PostConstruct
     public void initializeTestUsers() {
         if (userRepo.count() == 0) {
-            try {
-                logger.info("Starting test users initialization...");
+            if (userRepo.count() == 0) {
+                try {
+                    logger.info("Starting test users initialization...");
 
-                // Use passwordEncoder.encode() for test users too
-                User user1 = new User("CoinCollector123",
-                        passwordEncoder.encode("hashedPassword123"),
-                        "collector123@email.com");
-                logger.info("Created user1 object with ID: {}", user1.getId());
-                User savedUser1 = userRepo.saveAndFlush(user1);
-                logger.info("Saved user1 to database: {}", savedUser1.getUsername());
+                    // Use passwordEncoder.encode() for test users too
+                    User user1 = new User("CoinCollector123",
+                            passwordEncoder.encode("hashedPassword123"),
+                            "collector123@email.com");
+                    logger.info("Created user1 object with ID: {}", user1.getId());
+                    User savedUser1 = userRepo.saveAndFlush(user1);
+                    logger.info("Saved user1 to database: {}", savedUser1.getUsername());
 
-                User user2 = new User("NumismatistPro",
-                        passwordEncoder.encode("hashedPassword456"),
-                        "pro.coins@email.com");
-                logger.info("Created user2 object with ID: {}", user2.getId());
+                    User user2 = new User("NumismatistPro",
+                            passwordEncoder.encode("hashedPassword456"),
+                            "pro.coins@email.com");
+                    logger.info("Created user2 object with ID: {}", user2.getId());
 
-                User savedUser2 = userRepo.saveAndFlush(user2);
-                logger.info("Saved user2 to database: {}", savedUser2.getUsername());
+                    User savedUser2 = userRepo.saveAndFlush(user2);
+                    logger.info("Saved user2 to database: {}", savedUser2.getUsername());
 
-                ensureDefaultAdmin();
+                    ensureDefaultAdmin();
 
-                logger.info("Test users initialization completed");
-                logger.info("Final user count in database: {}", userRepo.count());
+                    logger.info("Test users initialization completed");
+                    logger.info("Final user count in database: {}", userRepo.count());
 
-            } catch (Exception e) {
-                logger.error("Error during test users initialization: ", e);
+                } catch (Exception e) {
+                    logger.error("Error during test users initialization: ", e);
+                }
+            } else {
+                logger.info("Test users already exist, skipping initialization");
             }
-        } else {
-            logger.info("Test users already exist, skipping initialization");
         }
     }
 
@@ -179,10 +178,7 @@ public class UserService {
                     existing.setRole("ROLE_ADMIN");
                     changed = true;
                 }
-                if (existing.getTokens() != tokens) {
-                    existing.setTokens(tokens);
-                    changed = true;
-                }
+
                 if (existing.getEmail() == null || !adminEmail.equalsIgnoreCase(existing.getEmail())) {
                     // only set email if empty or different
                     existing.setEmail(adminEmail);
@@ -288,7 +284,7 @@ public class UserService {
     }
 
     public boolean existsByUsername(String username) {
-        return userRepository.findByUsername(username).isPresent();
+        return userRepo.findByUsername(username).isPresent();
     }
 
 }
